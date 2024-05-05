@@ -57,6 +57,9 @@ io.on("connection", (socket: Socket) => {
   socket.on("triggerEndCall", () => {
     io.emit("callEnded");
   });
+  socket.on("emitDtmf", (button) => {
+    io.emit("playDtmfTone", button);
+  });
 });
 
 server.listen(PORT, () => {

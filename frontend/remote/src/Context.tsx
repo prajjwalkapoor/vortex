@@ -29,6 +29,7 @@ interface ContextProps {
   callUser: (id: string) => void;
   leaveCall: () => void;
   answerCall: () => void;
+  playDTMFTone: (button: string) => void;
   setCall: Dispatch<
     SetStateAction<{
       isReceivingCall: boolean;
@@ -112,9 +113,20 @@ const ContextProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
       window.location.reload();
     });
 
+    socket.on("playDtmfTone", (button: string) => {
+      if (button === "#") {
+        button = "hash";
+      }
+      const audio = new Audio(`/dtmf/dtmf-${button}.mp3`);
+      audio.play();
+    });
+
     return () => {
       socket.off("me");
       socket.off("callUser");
+      socket.off("devices");
+      socket.off("callEnded");
+      socket.off("playDtmfTone");
     };
   }, []);
 
@@ -168,8 +180,10 @@ const ContextProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
       signal: null,
     });
     socket.emit("triggerEndCall");
+  };
 
-    // window.location.reload();
+  const playDTMFTone = (button: string) => {
+    socket.emit("emitDtmf", button);
   };
 
   const contextValues: ContextProps = {
@@ -185,6 +199,7 @@ const ContextProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     callUser,
     leaveCall,
     answerCall,
+    playDTMFTone,
     setCall,
     devices,
   };

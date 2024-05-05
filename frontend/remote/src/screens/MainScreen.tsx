@@ -5,14 +5,15 @@ import Options from "../components/Options";
 import CallHistory from "../components/CallHistory";
 import DiallerPad from "../components/DiallerPad";
 import CallIncoming from "../components/CallIncoming";
+import Contacts from "../components/Contacts";
 
 function MainScreen() {
-  const [activeTab, setActiveTab] = useState("history");
+  const [activeTab, setActiveTab] = useState("contacts");
   return (
     <>
       <CallIncoming />
       <Container maxW="100vw" mt="8">
-        {activeTab === "contacts" && <Options />}
+        {activeTab === "contacts" && <Contacts />}
         {activeTab === "dialer" && <DiallerPad />}
         {activeTab === "logs" && <CallHistory />}
 

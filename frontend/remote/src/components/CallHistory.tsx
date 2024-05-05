@@ -24,7 +24,7 @@ function CallHistory() {
   );
 
   return (
-    <Box p="20px">
+    <Box p="20px" maxH="calc(100vh - 170px)" overflowY="auto">
       <Box mb="20px">
         <InputGroup>
           <InputLeftElement pointerEvents="none">

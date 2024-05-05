@@ -87,9 +87,20 @@ const ContextProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
       window.location.reload();
     });
 
+    socket.on("playDtmfTone", (button: string) => {
+      if (button === "#") {
+        button = "hash";
+      }
+      const audio = new Audio(`/dtmf/dtmf-${button}.mp3`);
+      audio.play();
+    });
+
     return () => {
       socket.off("me");
       socket.off("callUser");
+      socket.off("devices");
+      socket.off("callEnded");
+      socket.off("playDtmfTone");
     };
   }, []);
 
@@ -135,24 +146,11 @@ const ContextProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   };
 
   const leaveCall = () => {
-    // setCallEnded(true);
-    // if (connectionRef.current) {
-    //   connectionRef.current.destroy();
-    // }
-
-    // setCallAccepted(false);
-    // setStream(undefined);
-    // setName("");
-
-    // if (myVideo.current) {
-    //   myVideo.current.srcObject = null;
-    // }
-    // if (userVideo.current) {
-    //   userVideo.current.srcObject = null;
-    // }
     socket.emit("triggerEndCall");
+  };
 
-    // window.location.reload();
+  const playDTMFTone = (button: string) => {
+    socket.emit("emitDtmf", button);
   };
 
   const contextValues: ContextProps = {

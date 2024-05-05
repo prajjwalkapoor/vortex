@@ -4,7 +4,7 @@ import { FaPhoneAlt, FaBackspace, FaHistory } from "react-icons/fa";
 import { SocketContext } from "../Context";
 
 function DiallerPad() {
-  const { call, leaveCall, callAccepted, callEnded } =
+  const { call, leaveCall, callAccepted, playDTMFTone } =
     useContext(SocketContext);
   const [number, setNumber] = useState("");
 
@@ -19,14 +19,6 @@ function DiallerPad() {
 
   const handleCallButtonClick = () => {
     console.log("Call button clicked");
-  };
-
-  const playDTMFTone = (button: string) => {
-    if (button === "#") {
-      button = "hash";
-    }
-    const audio = new Audio(`/dtmf/dtmf-${button}.mp3`);
-    audio.play();
   };
 
   const diallerButtons = [
