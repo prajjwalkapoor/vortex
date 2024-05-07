@@ -5,6 +5,7 @@ import App from "./App";
 import { ChakraProvider } from "@chakra-ui/react";
 import { ContextProvider } from "./Context";
 import theme from "./theme";
+import * as serviceWorkerRegistration from "./serviceWorkerRegistrations";
 
 (window as any).global = window;
 (window as any).process = process;
@@ -21,3 +22,5 @@ root.render(
     </ContextProvider>
   </React.StrictMode>
 );
+
+serviceWorkerRegistration.register();

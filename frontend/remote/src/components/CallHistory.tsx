@@ -1,81 +1,43 @@
-import { useState } from "react";
-import {
-  Heading,
-  Box,
-  Flex,
-  Input,
-  InputGroup,
-  InputLeftElement,
-  IconButton,
-  Text,
-} from "@chakra-ui/react";
-import { FaSearch, FaTrash } from "react-icons/fa";
+import { Heading, Box, Flex, Text } from "@chakra-ui/react";
 import useLocalStorage from "../hooks/useLocalStorage";
 import Avatar from "react-avatar";
-import { MdCall } from "react-icons/md";
 
 function CallHistory() {
   const { get } = useLocalStorage();
-  const callLogs = get("callLogs") || [];
-  const [searchTerm, setSearchTerm] = useState("");
+  let callLogs = get("callLogs") || [];
 
-  const filteredCallLogs = callLogs.filter((log: any) =>
-    log.id.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // Convert 'when' property to Date objects
+  callLogs = callLogs.map((log: any) => ({
+    ...log,
+    when: new Date(log.when),
+  }));
+
+  // Sort callLogs by 'when' property
+  callLogs.sort((a: any, b: any) => b.when - a.when);
 
   return (
     <Box p="20px" maxH="calc(100vh - 170px)" overflowY="auto">
-      <Box mb="20px">
-        <InputGroup>
-          <InputLeftElement pointerEvents="none">
-            <FaSearch color="gray.400" />
-          </InputLeftElement>
-          <Input
-            type="text"
-            borderRadius="18px"
-            border="1px solid gray"
-            placeholder="Search call history..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </InputGroup>
-      </Box>
-      {/* Call history list */}
+      <Heading size="md" mb="26px">
+        Call History
+      </Heading>
       <Box paddingBottom="240ox">
-        {filteredCallLogs.map((log: any, index: number) => (
+        {callLogs.map((log: any, index: number) => (
           <Flex key={index} alignItems="center" mb="10px">
             <Avatar
-              name={log.id}
+              name={log.type === "INCOMING" ? "IN" : "OUT"}
               size="50"
               round={true}
               style={{ marginRight: "20px" }}
             />
             <Box>
-              <Heading as="h3" size="md" maxW={"200px"} isTruncated>
-                {log.id}
-              </Heading>
-              <Text fontSize="sm" color="gray.500">
-                {new Date(log.when).toLocaleString()}
-              </Text>
+              <p>{log.type === "INCOMING" ? "↙ INCOMING" : "↗ OUTGOING"}</p>
               <Text fontSize="sm" color="gray.500">
                 {log.timeElapsed}
               </Text>
+              <Text fontSize="sm" color="gray.500">
+                {log.when.toLocaleString()}
+              </Text>
             </Box>
-            <IconButton
-              aria-label="call"
-              icon={<MdCall />}
-              ml="auto"
-              variant="ghost"
-              background={"green.500"}
-              borderRadius={"50%"}
-              _hover={{ background: "green.600" }}
-              onClick={() => {
-                const updatedLogs = callLogs.filter(
-                  (item: any) => item.id !== log.id
-                );
-                // set("callLogs", updatedLogs);
-              }}
-            />
           </Flex>
         ))}
       </Box>

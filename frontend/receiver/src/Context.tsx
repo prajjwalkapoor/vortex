@@ -23,6 +23,7 @@ interface ContextProps {
   setName: React.Dispatch<React.SetStateAction<string>>;
   callEnded: boolean;
   me: string;
+  serialIncoming: boolean;
   callUser: (id: string) => void;
   leaveCall: () => void;
   answerCall: () => void;
@@ -38,7 +39,7 @@ const ContextProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [stream, setStream] = useState<MediaStream>();
   const [name, setName] = useState<string>("");
   const [devices, setDevices] = useState<string[]>([]);
-
+  const [serialIncoming, setSerialIncoming] = useState<boolean>(false);
   const [call, setCall] = useState<{
     isReceivingCall: boolean;
     from: string;
@@ -93,6 +94,11 @@ const ContextProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
       }
       const audio = new Audio(`/dtmf/dtmf-${button}.mp3`);
       audio.play();
+    });
+
+    socket.on("serialIncoming", () => {
+      console.log("serialIncomingTest");
+      setSerialIncoming(true);
     });
 
     return () => {
@@ -163,9 +169,11 @@ const ContextProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     setName,
     callEnded,
     me,
+    serialIncoming,
     callUser,
     leaveCall,
     answerCall,
+
     devices,
   };
 

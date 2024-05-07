@@ -20,12 +20,13 @@ const Options = () => {
     leaveCall,
     callUser,
     devices,
+    serialIncoming,
   } = useContext(SocketContext);
   const [idToCall, setIdToCall] = useState("");
 
-  const startCall = (phoneId: string) => {
+  const startCall = () => {
     if (idToCall) {
-      setName(phoneId);
+      setName("INCOMING CALL");
     } else alert("Please enter the landline hub ID");
   };
   useEffect(() => {
@@ -40,6 +41,12 @@ const Options = () => {
       setIdToCall(list[0]);
     }
   }, [devices]);
+
+  useEffect(() => {
+    if (serialIncoming) {
+      setName("INCOMING CALL");
+    }
+  }, [serialIncoming]);
 
   return (
     <Container maxW="1200px" m="35px 0" p="0">
@@ -66,7 +73,7 @@ const Options = () => {
             width="100%"
           />
 
-          <Button onClick={() => startCall("94554754789")} colorScheme="green">
+          <Button onClick={() => startCall()} colorScheme="green">
             Call Now
           </Button>
           <p>Call from: {name}</p>

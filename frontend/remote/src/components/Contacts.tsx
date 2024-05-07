@@ -38,20 +38,27 @@ function Contacts() {
     onClose: onAddModalClose,
   } = useDisclosure();
   const [newContact, setNewContact] = useState({ name: "", number: "" });
+  const [validationError, setValidationError] = useState(false);
 
   const filterContacts = contacts.filter((log: any) =>
     log.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const handleAddContact = () => {
-    const updatedContacts = [...contacts, newContact];
-    set("contacts", updatedContacts);
-    setNewContact({ name: "", number: "" });
-    onAddModalClose();
+    if (newContact.name && newContact.number) {
+      const updatedContacts = [...contacts, newContact];
+      set("contacts", updatedContacts);
+      setNewContact({ name: "", number: "" });
+      onAddModalClose();
+      setValidationError(false);
+    } else {
+      setValidationError(true);
+    }
   };
 
   return (
     <Box p="20px" maxH="calc(100vh - 170px)" overflowY="auto">
+      {/* Modals */}
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent backgroundColor="gray.800">
@@ -79,6 +86,7 @@ function Contacts() {
               </InputLeftElement>
               <Input
                 type="text"
+                required
                 placeholder="Name"
                 value={newContact.name}
                 onChange={(e) =>
@@ -91,14 +99,20 @@ function Contacts() {
                 <GoNumber color="gray.400" />
               </InputLeftElement>
               <Input
-                type="text"
+                type="number"
                 placeholder="Number"
+                required
                 value={newContact.number}
                 onChange={(e) =>
                   setNewContact({ ...newContact, number: e.target.value })
                 }
               />
             </InputGroup>
+            {validationError && (
+              <Text color="red.500" mt={2}>
+                Please enter name and number.
+              </Text>
+            )}
           </ModalBody>
           <ModalFooter>
             <Button colorScheme="green" mr={3} onClick={handleAddContact}>
@@ -110,6 +124,8 @@ function Contacts() {
           </ModalFooter>
         </ModalContent>
       </Modal>
+
+      {/* Search bar */}
       <Flex mb="20px" gap={8} alignItems="center">
         <InputGroup>
           <InputLeftElement pointerEvents="none">
@@ -128,13 +144,15 @@ function Contacts() {
           aria-label="settings"
           icon={<MdSettings />}
           ml="auto"
-          variant="ghost"
-          background={"red.500"}
+          background={"gray.600"}
+          color={"white"}
           borderRadius={"50%"}
           _hover={{ background: "red.600" }}
           onClick={onOpen}
         />
       </Flex>
+
+      {/* Contact list */}
       <Box paddingBottom="240ox">
         <Button
           variant="ghost"

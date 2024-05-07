@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Box, Button, Flex, Heading, IconButton, Text } from "@chakra-ui/react";
+import { Box, Flex, Heading, IconButton, Text } from "@chakra-ui/react";
 import {
   FaMicrophone,
   FaMicrophoneSlash,
@@ -17,7 +17,7 @@ function CallIncoming() {
   const { name, answerCall, call, callAccepted, callEnded, leaveCall } =
     useContext(SocketContext);
   const { get, set } = useLocalStorage();
-  const [idToCall, setIdToCall] = useState("");
+  const [idToCall] = useState("");
   const [callTime, setCallTime] = useState<number>(0);
   const [isMuted, setIsMuted] = useState(false);
   const [isSpeakerOn, setIsSpeakerOn] = useState(false);
@@ -41,9 +41,9 @@ function CallIncoming() {
       const prevCallLogs = get("callLogs") || [];
 
       const newCallData = {
-        id: idToCall,
         when: new Date().toISOString(),
         timeElapsed: formatTime(callTime),
+        type: call.isCalling ? "OUTGOING" : "INCOMING",
       };
       prevCallLogs.push(newCallData);
       set("callLogs", prevCallLogs);
@@ -95,7 +95,7 @@ function CallIncoming() {
           style={{ marginRight: "20px" }}
         />
         <Heading as="h2" mb="4" fontSize="2xl" isTruncated>
-          {call.from} is calling
+          {call.name}
         </Heading>
         <Flex justifyContent="center" mb="8">
           <IconButton
@@ -146,9 +146,9 @@ function CallIncoming() {
           style={{ marginRight: "20px" }}
         />
         <Heading as="h2" mb="4" fontSize="2xl" isTruncated>
-          {call.from}
+          ONGOING CALL
         </Heading>
-        <p>Call Time: {formatTime(callTime)}</p>
+        <p>{formatTime(callTime)}</p>
         <Flex justifyContent="center" mb="8">
           <IconButton
             aria-label="mute"

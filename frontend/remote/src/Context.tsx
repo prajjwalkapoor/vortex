@@ -81,12 +81,12 @@ const ContextProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
       });
 
     socket.on("me", (id: string) => setMe(id));
-    socket.on("callUser", ({ from, name: callerName, signal }: any) => {
+    socket.on("callUser", ({ from, name, signal }: any) => {
       setCall((prev) => ({
         ...prev,
         isReceivingCall: true,
         from,
-        name: callerName,
+        name,
         signal,
       }));
     });
